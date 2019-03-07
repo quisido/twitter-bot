@@ -1,0 +1,10 @@
+{
+  "name": "twitter-bot",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "node src/twitter-bot.js"
+  },
+  "dependencies": {
+    "twit": "^2.2.11"
+  }
+}
