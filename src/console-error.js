@@ -6,7 +6,7 @@ const centered = (str, len) => {
   return ' '.repeat(Math.floor(pad)) + str + ' '.repeat(Math.ceil(pad));
 };
 
-module.exports = (description, err) => {
+module.exports = function consoleError(description, err) {
   process.stdout.write('\n');
   const errorType =
     typeof err.code === 'number' ?

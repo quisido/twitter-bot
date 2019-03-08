@@ -1,5 +1,6 @@
 const Twit = require('twit');
 const consoleError = require('./console-error');
+const getFilePath = require('./get-file-path');
 const TwitMediaUploader = require('./twit-media-uploader');
 
 const access_token = process.env.ACCESS_TOKEN || process.argv[4];
@@ -50,10 +51,11 @@ const updateStatus = (status, media_ids = []) => {
     });
 };
 
-const updateStatusWithMedia = (status, file, alt_text) =>
-  TMediaUploader.uploadFile(file, alt_text)
+const updateStatusWithMedia = (status, file_path, alt_text) =>
+  TMediaUploader.uploadFile(file_path, alt_text)
     .then(media_id => updateStatus(status, [ media_id ]))
     .catch(() => {});
 
 // retweet('1095062910815125505');
-updateStatusWithMedia('Force of Will by @AceQuisido', './test.jpg', 'Force of Will');
+// updateStatus('This was posted by a bot!');
+// updateStatusWithMedia('Force of Will by @AceQuisido', getFilePath('./test.jpg'), 'Force of Will');

@@ -1,6 +1,6 @@
 {
   "name": "twitter-bot",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "scripts": {
     "start": "node src/twitter-bot.js"
   },
