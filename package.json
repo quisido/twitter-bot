@@ -1,6 +1,11 @@
 {
   "name": "twitter-bot",
   "version": "1.0.0",
+  "author": "Charles Stover <github@charlesstover.com>",
+  "description": "A Twitter bot for updating Twitter accounts periodically.",
+  "license": "MIT",
+  "main": "src/index.js",
+  "repository": "https://github.com/CharlesStover/twitter-bot.git",
   "scripts": {
     "start": "node src/twitter-bot.js"
   },

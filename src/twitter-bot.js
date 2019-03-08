@@ -12,6 +12,10 @@ if (!access_token || !access_token_secret || !consumer_key || !consumer_secret) 
   throw new Error('Required API keys are missing.');
 }
 
+const SECOND = 1000;
+const MINUTE = 60 * SECOND;
+const HOUR = 60 * MINUTE;
+
 const T = new Twit({
   access_token,
   access_token_secret,
@@ -55,6 +59,33 @@ const updateStatusWithMedia = (status, file_path, alt_text) =>
   TMediaUploader.uploadFile(file_path, alt_text)
     .then(media_id => updateStatus(status, [ media_id ]))
     .catch(() => {});
+
+
+
+let index = 0;
+const tweet = () => {
+  const tweetsIndex = require('./tweets/index.json');
+  const tweets = Object.values(tweetsIndex);
+  index = (index + 1) % tweets.length;
+  const metadata = tweets[index];
+  if (metadata.status) {
+    if (metadata.media) {
+      updateStatusWithMedia(
+        metadata.status,
+        getFilePath(metadata.media),
+        metadata.alt || metadata.status
+      );
+    }
+    else {
+      updateStatus(metadata.status);
+    }
+  }
+  else if (metadata.retweet) {
+    retweet(metadata.retweet);
+  }
+  setTimeout(tweet, 11 * HOUR);
+};
+tweet();
 
 // retweet('1095062910815125505');
 // updateStatus('This was posted by a bot!');
