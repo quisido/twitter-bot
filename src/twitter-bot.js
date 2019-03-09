@@ -3,6 +3,7 @@ const path = require('path');
 const Twit = require('twit');
 const consoleError = require('./console-error');
 const getFilePath = require('./get-file-path');
+const semiShuffle = require('./semi-shuffle');
 const TwitMediaUploader = require('./twit-media-uploader');
 
 
@@ -93,6 +94,7 @@ const tweet = (indx = null) => {
   const tweetsIndex = require(INDEX_PATH);
   delete require.cache[require.resolve(INDEX_PATH)];
   const tweets = Object.values(tweetsIndex);
+  semiShuffle(tweets);
 
   // The first tweet should be random.
   const index =
