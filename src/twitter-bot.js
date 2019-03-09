@@ -1,3 +1,4 @@
+const fs = require('fs');
 const Twit = require('twit');
 const consoleError = require('./console-error');
 const getFilePath = require('./get-file-path');
@@ -78,13 +79,32 @@ const updateStatusWithMedia = (status, file_path, alt_text) =>
 /**
  * Execute actions.
  */
-let index = 0;
-const tweet = () => {
-  const tweetsIndex = require('./tweets/index.json');
+const tweet = (indx = null) => {
+
+  // Import either JS or JSON.
+  const tweetsIndex = require(
+    fs.existsSync('./tweets/index.js') ?
+      './tweets/index.js' :
+      './tweets/index.json'
+  );
   const tweets = Object.values(tweetsIndex);
-  index = (index + 1) % tweets.length;
-  const metadata = tweets[index][Math.floor(Math.random() * tweets[index].length)];
+
+  // The first tweet should be random.
+  const index =
+    indx === null ?
+      Math.floor(Math.random() * tweetsIndex.length) :
+      indx;
+
+  // Get the tweet metadata.
+  const metadata =
+    Array.isArray(tweets[index]) ?
+      tweets[index][Math.floor(Math.random() * tweets[index].length)] :
+      tweets[index];
+
+  // If it's a status,
   if (metadata.status) {
+
+    // If it contains an image,
     if (metadata.media) {
       updateStatusWithMedia(
         metadata.status,
@@ -92,17 +112,32 @@ const tweet = () => {
         metadata.alt || metadata.status
       );
     }
+
+    // If it doesn't contain an image,
     else {
       updateStatus(metadata.status);
     }
   }
+
+  // If it's a retweet,
   else if (metadata.retweet) {
+
+    // TODO:
+    //   unretweet(metadata.retweet)
+    //     .then(retweet)
     retweet(metadata.retweet);
   }
-  setTimeout(tweet, 11 * HOUR);
+
+  // Tweet again in 11 hours.
+  setTimeout(() => {
+    tweet((index + 1) % tweets.length);
+  }, 11 * HOUR);
 };
 tweet();
 
-// retweet('1095062910815125505');
-// updateStatus('This was posted by a bot!');
-// updateStatusWithMedia('Force of Will by @AceQuisido', getFilePath('./test.jpg'), 'Force of Will');
+/**
+ * Examples:
+ *   retweet('1095062910815125505');
+ *   updateStatus('This was posted by a bot!');
+ *   updateStatusWithMedia('Force of Will by @AceQuisido', getFilePath('./test.jpg'), 'Force of Will');
+ */
