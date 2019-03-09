@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const Twit = require('twit');
 const consoleError = require('./console-error');
 const getFilePath = require('./get-file-path');
@@ -79,20 +80,23 @@ const updateStatusWithMedia = (status, file_path, alt_text) =>
 /**
  * Execute actions.
  */
+const TWEETS_DIR = path.join(process.cwd(), 'tweets');
+const INDEX_JS = path.join(TWEETS_DIR, 'index.js');
+const INDEX_JSON = path.join(TWEETS_DIR, 'index.json');
 const tweet = (indx = null) => {
 
   // Import either JS or JSON.
   const tweetsIndex = require(
-    fs.existsSync('./tweets/index.js') ?
-      './tweets/index.js' :
-      './tweets/index.json'
+    fs.existsSync(INDEX_JS) ?
+      INDEX_JS :
+      INDEX_JSON
   );
   const tweets = Object.values(tweetsIndex);
 
   // The first tweet should be random.
   const index =
     indx === null ?
-      Math.floor(Math.random() * tweetsIndex.length) :
+      Math.floor(Math.random() * tweets.length) :
       indx;
 
   // Get the tweet metadata.
