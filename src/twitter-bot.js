@@ -86,11 +86,12 @@ const INDEX_JSON = path.join(TWEETS_DIR, 'index.json');
 const tweet = (indx = null) => {
 
   // Import either JS or JSON.
-  const tweetsIndex = require(
+  const INDEX_PATH =
     fs.existsSync(INDEX_JS) ?
       INDEX_JS :
-      INDEX_JSON
-  );
+      INDEX_JSON;
+  const tweetsIndex = require(INDEX_PATH);
+  delete require.cache[require.resolve(INDEX_PATH)];
   const tweets = Object.values(tweetsIndex);
 
   // The first tweet should be random.
