@@ -67,7 +67,7 @@ const tweet = () => {
   const tweetsIndex = require('./tweets/index.json');
   const tweets = Object.values(tweetsIndex);
   index = (index + 1) % tweets.length;
-  const metadata = tweets[index];
+  const metadata = tweets[index][Math.floor(Math.random() * tweets[index].length)];
   if (metadata.status) {
     if (metadata.media) {
       updateStatusWithMedia(
