@@ -3,6 +3,11 @@ const consoleError = require('./console-error');
 const getFilePath = require('./get-file-path');
 const TwitMediaUploader = require('./twit-media-uploader');
 
+
+
+/**
+ * Require API tokens.
+ */
 const access_token = process.env.ACCESS_TOKEN || process.argv[4];
 const access_token_secret = process.env.ACCESS_TOKEN_SECRET || process.argv[5];
 const consumer_key = process.env.CONSUMER_KEY || process.argv[2];
@@ -12,6 +17,11 @@ if (!access_token || !access_token_secret || !consumer_key || !consumer_secret) 
   throw new Error('Required API keys are missing.');
 }
 
+
+
+/**
+ * Establish constants.
+ */
 const SECOND = 1000;
 const MINUTE = 60 * SECOND;
 const HOUR = 60 * MINUTE;
@@ -29,6 +39,9 @@ const TMediaUploader = new TwitMediaUploader(T);
 
 
 
+/**
+ * Define actions.
+ */
 const retweet = id => {
   process.stdout.write(`Retweeting #${id}`);
   return T.post('statuses/retweet/:id', { id })
@@ -62,6 +75,9 @@ const updateStatusWithMedia = (status, file_path, alt_text) =>
 
 
 
+/**
+ * Execute actions.
+ */
 let index = 0;
 const tweet = () => {
   const tweetsIndex = require('./tweets/index.json');
