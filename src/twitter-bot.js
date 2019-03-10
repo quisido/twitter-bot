@@ -93,8 +93,9 @@ const tweet = (indx = null) => {
       INDEX_JSON;
   const tweetsIndex = require(INDEX_PATH);
   delete require.cache[require.resolve(INDEX_PATH)];
-  const tweets = Object.values(tweetsIndex);
-  semiShuffle(tweets);
+  const tweetsEntries = Object.entries(tweetsIndex);
+  semiShuffle(tweetsEntries);
+  const tweets = tweetsEntries.map(entry => entry[1]);
 
   // The first tweet should be random.
   const index =
