@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+const fs = require('fs');
 const { promisify } = require('util');
 const consoleError = require('./console-error');
 
@@ -19,6 +21,9 @@ const getMediaData = file_path => {
     });
 };
 */
+
+fs.mkdirSync('./tmp');
+const md5 = crypto.createHash('md5');
 
 module.exports = class TwitMediaUploader {
 
@@ -70,19 +75,27 @@ module.exports = class TwitMediaUploader {
       return Promise.resolve(this.getFileMediaId(file_path));
     }
 
+    let filePath = file_path;
+    if (/^http/.test(file_path)) {
+      filePath = `./tmp/${md5.digest(file_path)}.${file_path.split('.').pop()}`;
+      const response = await fetch(file_path);
+      const data = await response.text();
+      fs.writeFileSync(filePath, data);
+    }
+
     /*
     return getMediaData(file_path)
       .then(this.uploadMedia)
     */
    
-    return this.uploadChunkedMedia(file_path)
+    return this.uploadChunkedMedia(filePath)
       .then(({ expires_after_secs, media_id }) => {
-        this.setFileMediaExpiration(file_path, expires_after_secs);
+        this.setFileMediaExpiration(filePath, expires_after_secs);
         return media_id;
       })
       .then(media_id => this.uploadMetadata(media_id, alt_text))
       .then(({ media_id }) => {
-        this.setFileMediaId(file_path, media_id);
+        this.setFileMediaId(filePath, media_id);
         return media_id;
       });
   }

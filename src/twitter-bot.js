@@ -1,5 +1,3 @@
-const fs = require('fs');
-const path = require('path');
 const Twit = require('twit');
 const consoleError = require('./console-error');
 const getFilePath = require('./get-file-path');
@@ -71,28 +69,23 @@ const updateStatus = (status, media_ids = []) => {
     });
 };
 
-const updateStatusWithMedia = (status, file_path, alt_text) =>
-  TMediaUploader.uploadFile(file_path, alt_text)
-    .then(media_id => updateStatus(status, [ media_id ]))
+const updateStatusWithMedia = (status, media) => {
+  const promises = [];
+  for (const [alt_text, file_path] of Object.entries(media)) {
+    promises.push(TMediaUploader.uploadFile(getFilePath(file_path), alt_text));
+  }
+  return Promise.all(promises)
+    .then(media_ids => updateStatus(status, media_ids))
     .catch(() => {});
+}
 
 
 
 /**
  * Execute actions.
  */
-const TWEETS_DIR = path.join(process.cwd(), 'tweets');
-const INDEX_JS = path.join(TWEETS_DIR, 'index.js');
-const INDEX_JSON = path.join(TWEETS_DIR, 'index.json');
-const tweet = (indx = null) => {
-
-  // Import either JS or JSON.
-  const INDEX_PATH =
-    fs.existsSync(INDEX_JS) ?
-      INDEX_JS :
-      INDEX_JSON;
-  const tweetsIndex = require(INDEX_PATH);
-  delete require.cache[require.resolve(INDEX_PATH)];
+const tweet = async (indx = null) => {
+  const tweetsIndex = await getTweetsIndex();
   const tweetsEntries = Object.entries(tweetsIndex);
   semiShuffle(tweetsEntries);
   const tweets = tweetsEntries.map(entry => entry[1]);
@@ -116,8 +109,7 @@ const tweet = (indx = null) => {
     if (metadata.media) {
       updateStatusWithMedia(
         metadata.status,
-        getFilePath(metadata.media),
-        metadata.alt || metadata.status
+        metadata.media,
       );
     }
 
@@ -147,5 +139,5 @@ tweet();
  * Examples:
  *   retweet('1095062910815125505');
  *   updateStatus('This was posted by a bot!');
- *   updateStatusWithMedia('Force of Will by @AceQuisido', getFilePath('./test.jpg'), 'Force of Will');
+ *   updateStatusWithMedia('Force of Will by @AceQuisido', { 'Force of Will': './test.jpg' });
  */
