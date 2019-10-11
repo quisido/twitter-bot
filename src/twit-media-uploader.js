@@ -27,8 +27,6 @@ if (!fs.existsSync('./tmp')) {
   fs.mkdirSync('./tmp');
 }
 
-const md5 = crypto.createHash('md5');
-
 module.exports = class TwitMediaUploader {
 
   constructor(T) {
@@ -81,7 +79,9 @@ module.exports = class TwitMediaUploader {
 
     let filePath = file_path;
     if (/^http/.test(file_path)) {
-      filePath = `./tmp/${md5.digest(file_path)}.${file_path.split('.').pop()}`;
+      const md5 = crypto.createHash('md5');
+      md5.update(file_path);
+      filePath = `./tmp/${md5.digest('hex')}.${file_path.split('.').pop()}`;
       const response = await fetch(file_path);
       const data = await response.text();
       fs.writeFileSync(filePath, data);
@@ -96,6 +96,9 @@ module.exports = class TwitMediaUploader {
     this.setFileMediaExpiration(filePath, expires_after_secs);
     this.setFileMediaId(filePath, media_id);
     await this.uploadMetadata(media_id, alt_text);
+    if (/^http/.test(file_path)) {
+      fs.unlinkSync(filePath);
+    }
     return media_id;
   }
 
