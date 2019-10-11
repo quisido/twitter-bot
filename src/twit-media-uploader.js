@@ -82,9 +82,10 @@ module.exports = class TwitMediaUploader {
       const md5 = crypto.createHash('md5');
       md5.update(file_path);
       filePath = `./tmp/${md5.digest('hex')}.${file_path.split('.').pop()}`;
+      console.log(`Downloading ${alt_text} from ${file_path} to ${filePath}...`);
       const response = await fetch(file_path);
-      const data = await response.text();
-      fs.writeFileSync(filePath, data);
+      const data = await response.arrayBuffer();
+      fs.writeFileSync(filePath, Buffer.from(new Uint8Array(data)));
     }
 
     /*
