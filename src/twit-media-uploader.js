@@ -22,7 +22,10 @@ const getMediaData = file_path => {
 };
 */
 
-fs.mkdirSync('./tmp');
+if (!fs.existsSync('./tmp')) {
+  fs.mkdirSync('./tmp');
+}
+
 const md5 = crypto.createHash('md5');
 
 module.exports = class TwitMediaUploader {

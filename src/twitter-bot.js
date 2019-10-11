@@ -1,6 +1,7 @@
 const Twit = require('twit');
 const consoleError = require('./console-error');
 const getFilePath = require('./get-file-path');
+const getTweetsIndex = require('./get-tweets-index');
 const semiShuffle = require('./semi-shuffle');
 const TwitMediaUploader = require('./twit-media-uploader');
 
