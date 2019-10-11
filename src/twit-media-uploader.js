@@ -68,11 +68,11 @@ module.exports = class TwitMediaUploader {
     this._T = T;
   }
 
-  uploadFile(file_path, alt_text) {
+  async uploadFile(file_path, alt_text) {
 
     // If this file has already been uploaded, return the media_id.
     if (this.hasFileMediaId(file_path)) {
-      return Promise.resolve(this.getFileMediaId(file_path));
+      return this.getFileMediaId(file_path);
     }
 
     let filePath = file_path;
@@ -88,16 +88,11 @@ module.exports = class TwitMediaUploader {
       .then(this.uploadMedia)
     */
    
-    return this.uploadChunkedMedia(filePath)
-      .then(({ expires_after_secs, media_id }) => {
-        this.setFileMediaExpiration(filePath, expires_after_secs);
-        return media_id;
-      })
-      .then(media_id => this.uploadMetadata(media_id, alt_text))
-      .then(({ media_id }) => {
-        this.setFileMediaId(filePath, media_id);
-        return media_id;
-      });
+    const { expires_after_secs, media_id } = await this.uploadChunkedMedia(filePath);
+    this.setFileMediaExpiration(filePath, expires_after_secs);
+    this.setFileMediaId(filePath, media_id);
+    await this.uploadMetadata(media_id, alt_text);
+    return media_id;
   }
 
   uploadChunkedMedia(file_path) {
