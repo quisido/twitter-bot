@@ -10,6 +10,7 @@
     "start": "node src/twitter-bot.js"
   },
   "dependencies": {
+    "node-fetch": "^2.6.0",
     "twit": "^2.2.11"
   }
 }

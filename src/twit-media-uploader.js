@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const fs = require('fs');
+const fetch = require('node-fetch');
 const { promisify } = require('util');
 const consoleError = require('./console-error');
 
