@@ -16,3 +16,9 @@ GitHub repository, for example. If the `TWEETS_URL` argument is not provided,
 the JSON of tweets will be loaded from the `/tweets/` directory. This allows
 you to mount your tweets via a Docker volume and update them without having to
 manipulate your Twitter Bot container.
+
+## Sponsor 💗
+
+If you are a fan of this project, you may
+[become a sponsor](https://github.com/sponsors/CharlesStover)
+via GitHub's Sponsors Program.
